@@ -46,8 +46,8 @@ def get_settings() -> Settings:
     os.environ.setdefault("HF_HOME", str(settings.model_cache_dir / "huggingface"))
     os.environ.setdefault("TRANSFORMERS_CACHE", str(settings.model_cache_dir / "transformers"))
     os.environ.setdefault("SENTENCE_TRANSFORMERS_HOME", str(settings.model_cache_dir / "sentence_transformers"))
-    os.environ.setdefault("HF_HUB_OFFLINE", "1")
-    os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
+    # os.environ.setdefault("HF_HUB_OFFLINE", "1")
+    # os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
     return settings
 
 
