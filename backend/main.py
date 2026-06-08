@@ -10,12 +10,6 @@ from backend.services.logging_config import configure_logging
 from backend.services.storage import storage
 from fastapi.middleware.cors import CORSMiddleware
 
-origins = [
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "https://rag-system-sand-phi.vercel.app/"
-
-]
 
 app.add_middleware(
     CORSMiddleware,
