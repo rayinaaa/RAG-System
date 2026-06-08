@@ -24,8 +24,8 @@ class Settings(BaseSettings):
     model_cache_dir: Path = BASE_DIR / "vectordb" / "model_cache"
     metadata_path: Path = BASE_DIR / "vectordb" / "documents.json"
     metrics_path: Path = BASE_DIR / "vectordb" / "metrics.json"
-    embedding_model: str = "BAAI/bge-small-en-v1.5"
-    reranker_model: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+    embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
+    reranker_model: str = ""#cross-encoder/ms-marco-MiniLM-L-6-v2
     llm_temperature: float = 0.1
     llm_timeout_seconds: int = 120
     gemini_api_key: str | None = None
