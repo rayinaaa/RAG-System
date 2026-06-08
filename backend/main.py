@@ -11,13 +11,7 @@ from backend.services.storage import storage
 from fastapi.middleware.cors import CORSMiddleware
 
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -35,7 +29,10 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.allowed_origins,
+    # allow_origins=settings.allowed_origins,
+    allow_origins=[
+        "https://rag-system-sand-phi.vercel.app",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
