@@ -13,7 +13,7 @@ class EmbeddingService:
         return SentenceTransformer(
             settings.embedding_model,
             cache_folder=str(settings.model_cache_dir / "sentence_transformers"),
-            local_files_only=True,
+            local_files_only=False,
         )
 
     @cached_property
