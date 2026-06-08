@@ -32,6 +32,7 @@ app.add_middleware(
     # allow_origins=settings.allowed_origins,
     allow_origins=[
         "https://rag-system-sand-phi.vercel.app",
+         "https://rag-system-d6yfmd0n0-rayinaaas-projects.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
