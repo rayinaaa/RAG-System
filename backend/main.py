@@ -5,12 +5,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from backend.routes import chat, documents, health, upload
+from backend.services.indexing import indexing_executor
 from backend.services.config import settings
 from backend.services.logging_config import configure_logging
 from backend.services.storage import storage
-from fastapi.middleware.cors import CORSMiddleware
-
-
 
 
 @asynccontextmanager
@@ -18,6 +16,7 @@ async def lifespan(app: FastAPI):
     configure_logging()
     storage.initialize()
     yield
+    indexing_executor.shutdown(wait=False, cancel_futures=False)
 
 
 app = FastAPI(
@@ -29,8 +28,8 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    # allow_origins=settings.allowed_origins,
-    allow_origin_regex=r"https://.*\.vercel\.app",
+    allow_origins=settings.allowed_origins,
+    allow_origin_regex=settings.allowed_origin_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -42,4 +41,3 @@ app.include_router(documents.router)
 app.include_router(chat.router)
 
 app.mount("/uploads", StaticFiles(directory=str(settings.upload_dir)), name="uploads")
-

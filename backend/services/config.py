@@ -19,13 +19,16 @@ class Settings(BaseSettings):
 
     app_env: str = "development"
     allowed_origins: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
+    allowed_origin_regex: str | None = r"https://.*\.vercel\.app"
     upload_dir: Path = BASE_DIR / "uploads"
     chroma_dir: Path = BASE_DIR / "vectordb" / "chroma"
     model_cache_dir: Path = BASE_DIR / "vectordb" / "model_cache"
     metadata_path: Path = BASE_DIR / "vectordb" / "documents.json"
     metrics_path: Path = BASE_DIR / "vectordb" / "metrics.json"
-    embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
-    reranker_model: str = ""#cross-encoder/ms-marco-MiniLM-L-6-v2
+    embedding_model: str = "BAAI/bge-small-en-v1.5"
+    reranker_model: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+    model_local_files_only: bool = False
+    indexing_workers: int = 1
     llm_temperature: float = 0.1
     llm_timeout_seconds: int = 120
     gemini_api_key: str | None = None
@@ -46,8 +49,9 @@ def get_settings() -> Settings:
     os.environ.setdefault("HF_HOME", str(settings.model_cache_dir / "huggingface"))
     os.environ.setdefault("TRANSFORMERS_CACHE", str(settings.model_cache_dir / "transformers"))
     os.environ.setdefault("SENTENCE_TRANSFORMERS_HOME", str(settings.model_cache_dir / "sentence_transformers"))
-    # os.environ.setdefault("HF_HUB_OFFLINE", "1")
-    # os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
+    if settings.model_local_files_only:
+        os.environ.setdefault("HF_HUB_OFFLINE", "1")
+        os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
     return settings
 
 

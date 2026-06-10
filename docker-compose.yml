@@ -3,11 +3,17 @@ services:
     build: .
     env_file:
       - .env
+    environment:
+      UPLOAD_DIR: /data/uploads
+      CHROMA_DIR: /data/chroma
+      METADATA_PATH: /data/documents.json
+      METRICS_PATH: /data/metrics.json
+      MODEL_CACHE_DIR: /app/backend/vectordb/model_cache
+      MODEL_LOCAL_FILES_ONLY: "true"
     ports:
       - "8000:8000"
     volumes:
-      - ./backend/uploads:/app/backend/uploads
-      - ./backend/vectordb:/app/backend/vectordb
+      - backend-data:/data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
@@ -26,3 +32,6 @@ services:
       - "5173:5173"
     depends_on:
       - backend
+
+volumes:
+  backend-data:

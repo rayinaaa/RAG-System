@@ -4,13 +4,14 @@ import uuid
 from pathlib import Path
 from typing import List
 
-from fastapi import APIRouter, BackgroundTasks, File, HTTPException, UploadFile
+from fastapi import APIRouter, File, HTTPException, UploadFile
 
 from backend.models.schemas import DocumentRecord
 from backend.rag.chunker import chunk_pages
 from backend.rag.embeddings import embeddings
 from backend.rag.parser import parse_document
 from backend.services.config import settings
+from backend.services.indexing import indexing_executor
 from backend.services.storage import storage
 
 logger = logging.getLogger(__name__)
@@ -87,7 +88,7 @@ def process_document(document_id: str) -> None:
 
 
 @router.post("/upload", response_model=List[DocumentRecord])
-async def upload_documents(background_tasks: BackgroundTasks, files: List[UploadFile] = File(...)):
+async def upload_documents(files: List[UploadFile] = File(...)):
     if not files:
         raise HTTPException(status_code=400, detail="No files uploaded")
     if len(files) > settings.max_upload_files:
@@ -115,7 +116,7 @@ async def upload_documents(background_tasks: BackgroundTasks, files: List[Upload
             chunk_count=0,
         )
         storage.add_document(record)
-        background_tasks.add_task(process_document, document_id)
+        indexing_executor.submit(process_document, document_id)
         created.append(record)
 
     return created

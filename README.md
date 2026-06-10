@@ -96,6 +96,9 @@ flowchart LR
 | `MAX_UPLOAD_SIZE_MB` | Per-file upload limit | `25` |
 | `MAX_UPLOAD_FILES` | Maximum files per upload request | `10` |
 | `VITE_API_BASE_URL` | Frontend API base URL | `http://127.0.0.1:8001` |
+| `ALLOWED_ORIGIN_REGEX` | Optional regex for preview deployments such as Vercel | `https://.*\.vercel\.app` |
+| `MODEL_LOCAL_FILES_ONLY` | Load embedding/reranker models only from cache | `false` locally, `true` in Docker |
+| `INDEXING_WORKERS` | Number of background document indexing workers | `1` |
 
 ## Installation
 
@@ -119,6 +122,10 @@ pip install -r requirements.txt
 ```
 
 On first upload or chat, SentenceTransformers downloads the embedding and reranker models. After models are cached under `backend/vectordb/model_cache`, runtime loading is forced to local files to avoid slow Hugging Face retries in restricted network environments.
+
+For deployment, prefer the provided Dockerfile. It downloads the embedding and reranker models during image build, then runs with `MODEL_LOCAL_FILES_ONLY=true`, so user uploads are not blocked by model downloads. If deploying without Docker, expect the first indexed document to be slower unless the model cache is already present.
+
+Do not mount a volume over `/app/backend/vectordb/model_cache` in Docker, because that hides the pre-baked model cache and makes upload/indexing slow again. The included `docker-compose.yml` stores persistent uploads, Chroma data, and JSON metadata under `/data` while leaving model cache inside the image.
 
 ### 3. Install frontend dependencies
 

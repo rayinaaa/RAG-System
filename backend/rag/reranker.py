@@ -6,19 +6,22 @@ from backend.services.config import settings
 
 class Reranker:
     @cached_property
-    # def model(self):
-    #     from sentence_transformers import CrossEncoder
-
-    #     return CrossEncoder(
-    #         settings.reranker_model,
-    #         cache_dir=str(settings.model_cache_dir / "transformers"),
-    #         local_files_only=False,
-    #     )
     def model(self):
-        return None
+        if not settings.reranker_model:
+            return None
+        from sentence_transformers import CrossEncoder
+
+        return CrossEncoder(
+            settings.reranker_model,
+            cache_dir=str(settings.model_cache_dir / "transformers"),
+            local_files_only=settings.model_local_files_only,
+        )
 
     def rerank(self, query: str, chunks: list[RetrievedChunk], top_k: int = 5):
-        return chunks[:top_k]
+        if not chunks:
+            return []
+        if self.model is None:
+            return chunks[:top_k]
         pairs = [(query, chunk.text) for chunk in chunks]
         scores = self.model.predict(pairs).tolist()
         ranked: list[RetrievedChunk] = []
